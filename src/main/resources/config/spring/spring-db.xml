@@ -6,7 +6,7 @@
     <!--  数据源  -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${driverClassName}"/>
-        <property name="jdbcUrl" value="${url}"/>
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
         <property name="user" value="${user}"/>
         <property name="password" value="${password}"/>
     </bean>

@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dd.test.SSM</groupId>
-    <artifactId>SpringSpringmvcMybatis</artifactId>
+    <artifactId>SSM</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>SSM Maven Webapp</name>
@@ -253,11 +253,11 @@
             <artifactId>pagehelper</artifactId>
             <version>4.0.3</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>tk.mybatis</groupId>-->
-        <!--<artifactId>mapper</artifactId>-->
-        <!--<version>3.3.8</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper</artifactId>
+            <version>3.3.8</version>
+        </dependency>
 
         <!--poi-->
         <dependency>
@@ -326,29 +326,57 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <build>
+                <filters>
+                    <filter>../${project.artifactId}/vars/dev.properties</filter>
+                </filters>
+            </build>
+        </profile>
+
+    </profiles>
+
     <build>
-        <!--&lt;!&ndash; 设置class输出目录 &ndash;&gt;-->
-        <!--<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>-->
-        <!--<testOutputDirectory>src/main/webapp/WEB-INF/classes</testOutputDirectory>-->
         <pluginManagement>
             <plugins>
+                <!-- war -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <warName>${project.artifactId}</warName>
+                        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                        <webResources>
+                            <resource>
+                                <directory>src/main/webapp</directory>
+                                <filtering>true</filtering>
+                                <includes>
+                                    <include>**/*.html</include>
+                                    <include>**/*.js</include>
+                                    <include>**/*.css</include>
+                                    <include>**/*.xml</include>
+                                </includes>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
+
                 <!-- 资源 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.7</version>
-                </plugin>
-                <!-- 编译 -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.2</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                        <delimiters>
+                            <delimiter>$[*]</delimiter>
+                        </delimiters>
                     </configuration>
                 </plugin>
+
                 <!-- 源码打包 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -362,36 +390,35 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>jar-no-fork</id>
-                            <phase>install</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
+                            <id>attach-sources</id>
+                            <phase>none</phase>
                         </execution>
                     </executions>
                 </plugin>
 
-                <!-- 依赖 -->
+                <!-- javadoc -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                    <executions>
-                        <execution>
-                            <id>copy-dependencies</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>copy-dependencies</goal>
-                            </goals>
-                            <!--<configuration>-->
-                            <!--&lt;!&ndash; lib输出目录 &ndash;&gt;-->
-                            <!--<outputDirectory>src/main/webapp/WEB-INF/lib</outputDirectory>-->
-                            <!--&lt;!&ndash; 不需要导入的范围 &ndash;&gt;-->
-                            <!--<excludeScope>provided</excludeScope>-->
-                            <!--</configuration>-->
-                        </execution>
-                    </executions>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
+
+                <!-- 编译 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -400,27 +427,22 @@
                         <skip>true</skip>
                     </configuration>
                 </plugin>
-                <!-- javadoc -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <configuration>
-                        <aggregate>true</aggregate>
-                    </configuration>
-                </plugin>
-
-                <!-- war -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.5</version>
-                    <configuration>
-                        <warName>SSM</warName>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+
         <finalName>SSM</finalName>
     </build>
 
