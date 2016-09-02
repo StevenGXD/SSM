@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
@@ -39,6 +40,14 @@ public class StudentController {
 		}
 		response.setMsg(student.toString());
 		return response.toString();
+	}
+
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView test() throws BizzException {
+		ModelAndView mv = new ModelAndView("hello");
+
+		return mv;
 	}
 
 }

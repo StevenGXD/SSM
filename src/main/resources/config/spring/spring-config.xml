@@ -5,30 +5,54 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-       <!-- 仅扫描service、annotation、dao,@Service、@Repository -->
-       <context:component-scan base-package="com.ssm.biz" />
-       <context:component-scan base-package="com.ssm.service" />
+    <!-- 仅扫描service、annotation、dao,@Service、@Repository -->
+    <context:component-scan base-package="com.ssm.biz"/>
+    <context:component-scan base-package="com.ssm.service"/>
 
-       <bean id="propertyConfigurer"
-             class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-              <property name="locations">
-                     <list>
-                            <value>classpath:config/properties/jdbc.properties</value>
-                     </list>
-              </property>
-       </bean>
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config/properties/jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
 
-       <aop:aspectj-autoproxy proxy-target-class="true" />
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
-       <bean id="queryCacheUpdateTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-              <!-- 线程池维护线程的最少数量 -->
-              <property name="corePoolSize" value="4"/>
-              <!-- 线程池维护线程所允许的空闲时间 -->
-              <property name="keepAliveSeconds" value="30000"/>
-              <!-- 线程池维护线程的最大数量 -->
-              <property name="maxPoolSize" value="4"/>
-              <!-- 线程池所使用的缓冲队列 -->
-              <property name="queueCapacity" value="1000000"/>
-       </bean>
+    <bean id="queryCacheUpdateTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 线程池维护线程的最少数量 -->
+        <property name="corePoolSize" value="4"/>
+        <!-- 线程池维护线程所允许的空闲时间 -->
+        <property name="keepAliveSeconds" value="30000"/>
+        <!-- 线程池维护线程的最大数量 -->
+        <property name="maxPoolSize" value="4"/>
+        <!-- 线程池所使用的缓冲队列 -->
+        <property name="queueCapacity" value="1000000"/>
+    </bean>
 
+    <!-- freemarker的配置 -->
+    <bean id="freemarkerConfigurer"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/views/"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_update_delay">3</prop>
+                <prop key="locale">zh_CN</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="date_format">yyyy-MM-dd</prop>
+                <prop key="number_format">#.##</prop>
+                <prop key="defaultEncoding">UTF-8</prop>
+                <!-- 自动获取spring.ftl宏，此处路径是上面templateLoaderPath的相对路径 -->
+                <prop key="auto_import">common/spring.ftl as spring</prop>
+            </props>
+        </property>
+        <property name="freemarkerVariables">
+            <map>
+                <entry key="xml_escape" value-ref="fmXmlEscape"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
 </beans>

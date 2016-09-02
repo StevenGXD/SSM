@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <mvc:annotation-driven/>
@@ -10,7 +10,8 @@
     <!-- 仅扫描@Controller注解 -->
     <context:component-scan base-package="com.ssm.controller" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
 
     <!-- 静态资源访问 -->
@@ -21,26 +22,28 @@
 
     <mvc:view-controller path="/" view-name="index"/>
 
-    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
-        <!-- 配置jsp路径前缀 -->
-        <property name="prefix" value="/"></property>
-        <!-- 配置URl后缀 -->
-        <property name="suffix" value=".jsp"></property>
-    </bean>
-
     <!-- 设置spring mvc校验，以下 validator ConversionService 在使用 mvc:annotation-driven会 自动注册 -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
     </bean>
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+    <!-- 文件上传 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          p:defaultEncoding="utf-8">
+        <!-- 解析文件时抛异常 -->
+        <property name="resolveLazily" value="true"/>
+        <!-- 单位大小是Byte -->
+        <property name="maxUploadSize" value="1000000"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
 
     <!-- FreeMarker视图解析 -->
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
           abstract="false" scope="singleton" lazy-init="default" autowire="default">
         <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="order" value="1"/>
         <property name="suffix" value=".ftl"/>
         <property name="cache" value="true"/>
         <property name="contentType" value="text/html;charset=UTF-8"/>
